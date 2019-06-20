@@ -1,9 +1,9 @@
 <?php session_start();?>
+<!-- Part of Javascript final -->
 
 <?php
 $pageTitle = "Rotten Potatoe: Register";
 require_once "includes/header.php";
-require_once "includes/nav.php";
 ?>
 
 <?php
@@ -18,14 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $db->set_charset('utf8');
 
-    $type = $_POST['type'];
+    $role = $_POST['role'];
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     $email = $_POST['email'];
     $password = hash('sha512', $_POST['password']);
     $username = $_POST['username'];
-    $sql = "INSERT INTO user (type,first_name,last_name,email,password,username)
-                    VALUES('$type','$first_name','$last_name','$email','$password','$username')";
+
+    $sql = "INSERT INTO users (role,first_name,last_name,email,password,username)
+                    VALUES('$role','$first_name','$last_name','$email','$password','$username')";
     // echo $sql;
     $result = $db->query($sql);
     if (!$result) {
@@ -36,14 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-
-	<h2>Register</h2>
-	<form action="register.php" method="post" onsubmit="return verify()">
-		<label class="reglabel" for="type">Role: </label>
-		<input type="radio" name="type" value="yes">User
-		<input type="radio" name="type" value="no">Admin
+    <h2>Register</h2>
+    <div id="formerror">
+	<form action="register.php" method="post" name="formerr" onsubmit="return verify()">
+		<label class="reglabel" for="role">Role: </label>
+		<input type="radio" name="role" id="radio-yes" value="yes"><span id="radio-user">User</span>
+		<input type="radio" name="role" id="radio-no" value="no"><span id="radio-admin">Admin</span>
 		<br>
-		<label class="reglabel" for="username">Username:</label>
+		<label class="reglabel" for="username">Username:</label><span id="error-username"></span>
 		<input class="reginput" type="text" id="username" name="username" size="20" maxlength="20">
 		<br>
 		<label class="reglabel" for="first_name">First Name:</label>
@@ -59,24 +60,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		<input class="reginput" type="email" id="email" name="email" size="20" maxlength="20">
 		<br>
 		<input class="button1" type="submit" value="Register">
-	</form>
+    </form>
+</div>
 
-
+<!-- ------------------------------------------------------------------------------------------------------- -->
 
 	<script>
+    var radio_yes = document.getElementById("radio-yes");
+    var radio_no = document.getElementById("radio-no");
+    var radio_user = document.getElementById("radio-user");
+    var radio_admin = document.getElementById("radio-admin");
+
+
     var username = document.getElementById("username");
-	// var password = document.getElementById("password");
 	var first_name = document.getElementById("first_name");
 	var last_name = document.getElementById("last_name");
 	var password = document.getElementById("password");
-	var email = document.getElementById("email");
+    var email = document.getElementById("email");
+    var error = document.getElementById("formerror");
     var valid = true;
 
-    function verify() {
+   function verify() {
+    if (!radio_yes.checked && !radio_no.checked){
+        radio_user.className="radio-error";
+        radio_admin.className="radio-error";
+        valid = false;
+    }
+
+
     if (username.value == "") {
         username.className="form-error";
         valid = false;
     }
+
 	
 	if (first_name.value == "") {
         first_name.className="form-error";

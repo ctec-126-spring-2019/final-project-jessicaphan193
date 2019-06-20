@@ -1,9 +1,9 @@
 <?php session_start();?>
+<!-- Part of Javascript final -->
 
 <?php
 $pageTitle = "Rotten Potatoe: Login";
 require_once "includes/header.php";
-require_once "includes/nav.php";
 ?>
 
 <?php
@@ -23,26 +23,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = hash('sha512', $_POST['password']);
 
     $sql = "SELECT * FROM users WHERE username='" . $_POST["username"] . "'" . " AND password=" . "'" . $password . "' LIMIT 1";
-    //  echo $sql;
     $result = $db->query($sql);
     if ($result->num_rows == 1) {
         $_SESSION['loggedin'] = 1;
         $_SESSION['username'] = $username;
 
-        // $_SESSION['username'] = $row['username'];
         $row = $result->fetch_assoc();
-        $_SESSION['type'] = $row['type'];
+        $_SESSION['role'] = $row['role'];
         $_SESSION['firstname'] = $row['first_name'];
         $_SESSION['lastname'] = $row['last_name'];
         $_SESSION['id'] = $row['id'];
         $_SESSION['loggedin'] = 1;
         $_SESSION['username'] = $row['username'];
+      
         header('location: home.php');
 
     } else {
-        echo '<p>Could not log you in. \\nPlease try again or go away</p>';
-        // $message = "Could not log you in. \\nPlease try again or go away.";
-        // echo "<script type='text/javascript'>alert('$message');</script>";
+        $message = "Could not log you in. \\nPlease try again or go away.";
+        echo "<script type='text/javascript'>alert('$message');</script>";
     }
 
 }
@@ -64,6 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	<input class="button1" type="submit" value="Login">
 </form>
 
+<!-- ------------------------------------------------------------------------------------------------- -->
+
 <script>
     var username = document.getElementById("username");
     var password = document.getElementById("password");
@@ -83,11 +83,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
 </script>
-
-
-
-
-
-
 
 <?php require_once 'includes/footer.php'?>
